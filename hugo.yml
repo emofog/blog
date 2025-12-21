@@ -3,7 +3,6 @@ baseURL: "https://emofog.github.io/blog/"  # 站点最终部署的完整 URL，�
 languageCode: "zh"                         # 站点默认语言编码，zh 代表中文
 title: "全麦面包"                          # 浏览器标签 & SEO 标题
 theme: "PaperMod"                          # 当前使用的主题目录名（themes/PaperMod）
-# defaultContentLanguage: "zh"               # 若多语言，默认先显示中文
 
 # ========== 构建控制 ==========
 enableInlineShortcodes: true  # 允许在 Markdown 中直接写内联短代码，如 {{< ref >}}
@@ -57,7 +56,7 @@ params:
   description: "一个简洁、快速、响应式的中文 Hugo 博客"  # SEO 默认描述
   author: "emofog"                   # 文章底部作者名
   defaultTheme: auto                 # 跟随系统亮/暗，可选 light / dark
-  ShowShareButtons: true             # 文章底部显示分享按钮
+  ShowShareButtons: false             # 文章底部显示分享按钮
   ShowReadingTime: true              # 预估阅读时长
   ShowPostNavLinks: true             # 文章底：上一篇/下一篇
   ShowBreadCrumbs: true              # 面包屑导航
