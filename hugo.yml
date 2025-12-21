@@ -2,6 +2,7 @@ baseURL: "https://emofog.github.io/blog/"
 languageCode: "zh-cn"
 title: "全麦面包"
 theme: "PaperMod"
+defaultContentLanguage: "zh"
 
 enableInlineShortcodes: true
 enableRobotsTXT: true
