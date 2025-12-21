@@ -1,0 +1,107 @@
+baseURL: "https://emofog.github.io/blog/"
+languageCode: "zh-cn"
+title: "全麦面包"
+theme: "PaperMod"
+
+enableInlineShortcodes: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
+mainsections: ["posts"]
+
+minify:
+  disableXML: true
+
+pagination:
+  pagerSize: 5
+
+# 仅保留中文语言设置
+languages:
+  zh:
+    languageName: "中文"
+    weight: 1
+    title: "全麦面包"
+    taxonomies:
+      category: categories
+      tag: tags
+      series: series
+    menu:
+      main:
+        - name: 首页
+          url: /
+          weight: 1
+        - name: 归档
+          url: /archives/
+          weight: 2
+        - name: 标签
+          url: /tags/
+          weight: 3
+        - name: 搜索
+          url: /search/
+          weight: 4
+        - name: 关于
+          url: https://emofog.github.io/
+          weight: 5
+
+params:
+  env: production
+  description: "一个简洁、快速、响应式的中文 Hugo 博客"
+  author: "emofog"
+  defaultTheme: auto
+  ShowShareButtons: true
+  ShowReadingTime: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowToc: true
+  ShowRssButtonInSectionTermList: true
+  ShowAllPagesInArchive: true
+  ShowPageNums: true
+  displayFullLangName: false
+
+  # 首页信息（可自定义）
+  homeInfoParams:
+    Title: "全麦面包"
+    Content: >
+      🍞 欢迎来到我的技术笔记与生活随笔！
+
+  # 社交图标（按需调整）
+  socialIcons:
+    - name: github
+      url: "https://github.com/emofog"
+
+  # 编辑链接（如使用 GitHub）
+  editPost:
+    URL: "https://github.com/emofog/blog/tree/main/content"
+    Text: "建议修改"
+    appendFilePath: true
+
+  # 搜索配置（默认使用 Fuse.js）
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 2
+    keys: ["title", "permalink", "summary", "content"]
+
+  assets:
+    disableHLJS: false  # 启用代码高亮
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true  # 允许 HTML（用于 TOC、自定义内容等）
+  highlight:
+    noClasses: false
+    style: monokai
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
