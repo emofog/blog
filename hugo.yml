@@ -1,5 +1,5 @@
 baseURL: "https://emofog.github.io/blog/"
-languageCode: "zh-cn"
+languageCode: "zh"
 title: "全麦面包"
 theme: "PaperMod"
 defaultContentLanguage: "zh"
