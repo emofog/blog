@@ -134,7 +134,5 @@ ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::IMU_STEREO, false);
 
 {{< bilibili BV1FqBvBbEML>}}
 
----
-
 [^1]: [EuRoC MAV Dataset 官网](https://projects.asl.ethz.ch/datasets/euroc-mav/)  
 [^2]: Burri, M., et al. (2016). The EuRoC micro aerial vehicle datasets. *The International Journal of Robotics Research*. [DOI:10.1177/0278364915620033](https://journals.sagepub.com/doi/10.1177/0278364915620033)
