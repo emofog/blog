@@ -1,0 +1,19 @@
+{{/* Bilibili 自适应短代码，强制 16:9 */}}
+{{- $id := "" }}
+{{- $fullscreen := true }}
+{{- if .IsNamedParams }}
+  {{- $id = .Get "id" }}
+  {{- if isset .Params "fullscreen" }}{{- $fullscreen = .Get "fullscreen" }}{{- end }}
+{{- else }}
+  {{- $id = .Get 0 }}
+{{- end }}
+{{- $aspect := 0.5625 }}
+<div class="bilibili-wrap" style="position:relative;width:100%;height:0;padding-bottom:{{ mul 100 $aspect }}%;">
+  <iframe
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    src="https://player.bilibili.com/player.html?bvid={{ $id }}&high_quality=1"
+    scrolling="no"
+    frameborder="no"
+    allowfullscreen="{{ $fullscreen }}">
+  </iframe>
+</div>
