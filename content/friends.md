@@ -1,6 +1,7 @@
 ---
-showToc: true
-showReadingTime: false
+showtoc: false
+hidemeta: true
+comments: true
 ---
 
 # 朋友们
