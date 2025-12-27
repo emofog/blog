@@ -1,12 +1,10 @@
 ---
 title: "友链"
-description: "朋友们"
+showTableOfContents: false
+layout: "page"
 ---
 
 # 朋友们
-
-
-<div style="display: flex; flex-wrap: wrap; justify-content: center; margin: 2rem 0;">
 
 {{< friend 
     name="secreu" 
