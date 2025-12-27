@@ -9,14 +9,12 @@ categories: []
 > **开发环境说明**  
 > - 课程平台：[Mo](https://mo.zju.edu.cn/classroom/class/zju_ai_sys)
 
----
-
 # 1 中医辨证系统实现
 
 ## 1.1 系统提示词设计
 
 为确保大语言模型在中医辨证任务中输出规范、可靠且符合临床标准的结果，基于中医辨证理论与已有慢性淋巴细胞白血病（CLL）中医证候数据库，设计了结构化、强约束的系统提示词（system prompt）。该提示词明确限定输出范围、格式及判断依据，有效抑制模型的自由发挥，提升临床适用性。
-
+{{< collapse summary="查看源码" openByDefault="false" >}}
 ```python
 system_prompt = """
 你是一位经验丰富的中医专家，请根据患者症状描述，结合慢性淋巴细胞白血病（CLL）的中医辨证规律，判断以下两项：
@@ -42,6 +40,7 @@ system_prompt = """
 不得添加解释、推测或额外字段。
 """
 ```
+{{< /collapse >}}
 
 ## 1.2 多模型初步测试结果
 
@@ -80,7 +79,7 @@ system_prompt = """
 - 通过合理设置 `epochs`、`lr_max`、余弦退火学习率调度、全量微调，最终达到 **94.62%（123/130）**。
 
 ### PyTorch 版 MobileNetV2 训练核心代码
-
+{{< collapse summary="查看源码" openByDefault="false" >}}
 ```python
 # dataset.py 中的数据加载器
 """
@@ -425,14 +424,16 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+{{< /collapse >}}
 
 > 注：`model_v2` 参考自B站教程[^1]。
 
 ## 2.2 进阶方案：EfficientNet-B0
 
-考虑到 MobileNetV2 已较陈旧，参考 [SOTA 图像分类榜单](https://www.codesota.com/browse/computer-vision/image-classification) 与 [Hugging Face ImageNet Leaderboard](https://huggingface.co/spaces/Bekhouche/ImageNet-1k_leaderboard)，在模型精度与参数量之间权衡后，选用 **EfficientNet-B0**。
+考虑到 MobileNetV2 已较陈旧，参考 SOTA 图像分类榜单[^2] 与 ImageNet Leaderboard[^3]，在模型精度与参数量之间权衡后，选用 **EfficientNet-B0**。
 
 ### PyTorch 版 EfficientNet-B0 训练核心代码
+{{< collapse summary="查看源码" openByDefault="false" >}}
 ```python
 import os
 import math
@@ -556,6 +557,7 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+{{< /collapse >}}
 
 ### 改进点
 
@@ -565,11 +567,9 @@ if __name__ == "__main__":
 - 调整 batch_size、epochs、lr_max。
 
 ### 训练与测试结果
+在第 80 个 epoch（`1227_1824_080.pth`）测试准确率达到 **97.69%（127/130）**；
 
-- 每 epoch 保存模型，便于选择最佳 checkpoint；
-- 在第 80 个 epoch（`1227_1824_080.pth`）测试准确率达到 **97.69%（127/130）**；
-- 测试代码使用相同预处理流程加载模型并预测。
-
+{{< collapse summary="查看源码" openByDefault="false" >}}
 ```python
 # main.py 测试推理代码
 import os
@@ -637,10 +637,12 @@ def predict(image):
 
     return CLASS_NAMES[pred_idx]
 ```
-
+{{< /collapse >}}
 > 注：此处未继续优化，但可通过更强模型（如 EfficientNet-B6、ConvNeXt）、更丰富数据增强（AutoAugment, Mixup）、更精细调参进一步提升性能。
 
 ![垃圾分类最终测试结果](2025-12-27_20-11-12.png)
 
 
 [^1]: [使用pytorch搭建MobileNetV2并基于迁移学习训练](https://www.bilibili.com/video/BV1qE411T7qZ/?spm_id_from=333.337.search-card.all.click)
+[^2]: [SOTA 图像分类榜单](https://www.codesota.com/browse/computer-vision/image-classification) 
+[^3]: [ImageNet Leaderboard](https://huggingface.co/spaces/Bekhouche/ImageNet-1k_leaderboard)

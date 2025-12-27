@@ -34,20 +34,20 @@ languages:
       series: series
     menu:                 # 顶部导航栏（顺序按 weight 升序）
       main:
-        - name: 首页
+        - name: 🏠 首页
           url: /
           weight: 1
-        - name: 归档
+        - name: 📦 归档
           url: /archives/
           weight: 2
-        - name: 标签
+        - name: 🏷️ 标签
           url: /tags/
           weight: 3
-        - name: 搜索
+        - name: 🔍 搜索
           url: /search/
           weight: 4
-        - name: 关于
-          url: https://emofog.github.io/  # 可改为 /about/ 若站内已有页面
+        - name: ℹ️ 关于
+          url: https://emofog.github.io/
           weight: 5
 
 # ========== 主题参数（PaperMod 专用） ==========
@@ -97,6 +97,10 @@ params:
   # 静态资源
   assets:
     disableHLJS: false  # false=启用 highlight.js 代码高亮
+
+  analytics:
+    bing:
+      SiteVerificationTag: ""
 
 # ==========  markup 解析器 ==========
 markup:
