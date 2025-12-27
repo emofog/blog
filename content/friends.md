@@ -1,8 +1,5 @@
 ---
-title: "友链"
-toc: false
-hideSummary: true
-showDate: false
+showToc: true
 showReadingTime: false
 ---
 
