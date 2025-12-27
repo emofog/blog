@@ -1,7 +1,9 @@
 ---
 title: "友链"
-showTableOfContents: false
-layout: "page"
+toc: false
+hideSummary: true
+showDate: false
+showReadingTime: false
 ---
 
 # 朋友们
