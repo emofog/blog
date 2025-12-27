@@ -1,5 +1,6 @@
 ---
 showtoc: false
+ShowBreadCrumbs: false
 hidemeta: true
 comments: true
 ---
