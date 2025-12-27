@@ -1,8 +1,8 @@
 # ========== 站点核心 ==========
 baseURL: "https://emofog.github.io/blog/"  # 站点最终部署的完整 URL，末尾建议保留 /
-languageCode: "zh"                         # 站点默认语言编码，zh 代表中文
-title: "全麦面包"                          # 浏览器标签 & SEO 标题
-theme: "PaperMod"                          # 当前使用的主题目录名（themes/PaperMod）
+languageCode: "zh"                         # 站点默认语言编码
+title: "全麦面包的博客"                          # 浏览器标签 & SEO 标题
+theme: "PaperMod"                          # 当前使用的主题
 
 # ========== 构建控制 ==========
 enableInlineShortcodes: true  # 允许在 Markdown 中直接写内联短代码，如 {{< ref >}}
@@ -43,7 +43,7 @@ languages:
         - name: 🔍 搜索
           url: /search/
           weight: 3
-        - name: 📎 友链
+        - name: 🔗 友链
           url: /friends/
           weight: 4
         - name: 关于
