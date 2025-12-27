@@ -1,81 +1,98 @@
-{{/* layouts/shortcodes/friend.html */}}
-{{/* 使用方法: {{< friend name="张三" url="https://example.com" avatar="https://avatar.com/photo.jpg" desc="前端开发爱好者" >}} */}}
-
+{{/* layouts/shortcodes/friend.html /}} {{/  使用方法: {{< friend name="张三" url="https://example.com" avatar="https://avatar.com/photo.jpg" desc="前端开发爱好者" >}} */}}
 <style>
-  .friend-card {
-    display: inline-block;
-    width: 280px;
-    margin: 12px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    overflow: hidden;
-    text-decoration: none;
-    vertical-align: top;
-  }
+/* 友链容器样式 - 建议在外层容器使用此类 */
+.link-navigation {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+    max-width: 100%;
+}
 
-  .friend-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  }
+/* 通用卡片样式 */
+.card {
+    width: 100%;
+    max-width: 320px;
+    height: 90px;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    display: flex;
+    align-items: center;
+    color: #333;
+    justify-self: center;
+}
 
-  .friend-avatar {
-    width: 80px;
-    height: 80px;
+.card:hover {
+    transform: translateY(0px) scale(1.05);
+    background-color: rgba(68, 138, 255, 0.1);
+    color: #040000;
+}
+
+.card a {
+    border: none;
+}
+
+.card .ava {
+    width: 3rem !important;
+    height: 3rem !important;
+    margin: 0 !important;
+    margin-right: 1em !important;
     border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 24px auto 12px;
-    display: block;
-  }
+}
 
-  .friend-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #2c3e50;
-    text-align: center;
-    margin: 8px 0;
-    padding: 0 16px;
-  }
+.card .card-header {
+    font-style: italic;
+    overflow: hidden;
+    width: auto;
+}
 
-  .friend-desc {
+.card .card-header a {
+    font-style: normal;
+    color: #608DBD;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.card .card-header a:hover {
+    color: #d480aa;
+    text-decoration: none;
+}
+
+.card .card-header .info {
+    font-style: normal;
+    color: #706f6f;
     font-size: 14px;
-    color: #7f8c8d;
-    text-align: center;
-    line-height: 1.5;
-    padding: 0 16px 24px;
-    margin: 0;
-  }
+    min-width: 0;
+    overflow: visible;
+    white-space: normal;
+}
 
-  .friend-link {
-    display: block;
-    padding: 8px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .friend-card:hover .friend-link {
-    opacity: 1;
-  }
-
-  @media (max-width: 600px) {
-    .friend-card {
-      width: 100%;
-      margin: 8px 0;
+/* 小屏优化 */
+@media (max-width: 768px) {
+    .link-navigation {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
     }
-  }
+    
+    .card {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 80px;
+    }
+    
+    .card:hover {
+        background-color: rgba(68, 138, 255, 0.1);
+    }
+}
 </style>
-
-<a href="{{ .Get "url" }}" target="_blank" rel="noopener" class="friend-card">
-  <img src="{{ .Get "avatar" }}" alt="{{ .Get "name" }}" class="friend-avatar">
-  <h3 class="friend-name">{{ .Get "name" }}</h3>
-  <p class="friend-desc">{{ .Get "desc" }}</p>
-  <span class="friend-link">访问主页 →</span>
-</a>
+<div class="card">
+    <img class="ava" src="{{ .Get "avatar" }}" alt="{{ .Get "name" }}" />
+    <div class="card-header">
+        <div>
+            <a href="{{ .Get "url" }}" target="_blank" rel="noopener">{{ .Get "name" }}</a>
+        </div>
+        <div class="info">{{ .Get "desc" }}</div>
+    </div>
+</div>
