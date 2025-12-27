@@ -84,15 +84,6 @@ jobs:
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/" \
             --cacheDir "${{ runner.temp }}/hugo_cache"
-      - name: Display generated index.html (for debugging)
-        run: |
-          if [[ -f ./public/index.html ]]; then
-            echo "=== Content of ./public/index.html ==="
-            cat ./public/index.html
-          else
-            echo "⚠️ ./public/index.html not found!"
-            ls -la ./public/
-          fi
       - name: Cache save
         id: cache-save
         uses: actions/cache/save@v4
