@@ -40,13 +40,13 @@ languages:
         - name: 📦 归档
           url: /archives/
           weight: 2
-        - name: 🏷️ 标签
-          url: /tags/
-          weight: 3
         - name: 🔍 搜索
           url: /search/
+          weight: 3
+        - name: 📎 友链
+          url: /friends/
           weight: 4
-        - name: ℹ️ 关于
+        - name: 关于
           url: https://emofog.github.io/
           weight: 5
 
@@ -116,4 +116,4 @@ outputs:
   home:
     - HTML
     - RSS
-    - JSON  # 用于搜索索引或 PWA
+    - JSON
