@@ -1,6 +1,6 @@
 ---
 date: '2025-12-25T16:29:31+08:00'
-draft: true
+draft: false
 title: '人工智能算法与系统实训作业'
 tags: [AI]
 categories: []
@@ -11,7 +11,7 @@ categories: []
 
 # 1 中医辨证系统实现
 
-## 1.1 系统提示词设计
+## 系统提示词设计
 
 为确保大语言模型在中医辨证任务中输出规范、可靠且符合临床标准的结果，基于中医辨证理论与已有慢性淋巴细胞白血病（CLL）中医证候数据库，设计了结构化、强约束的系统提示词（system prompt）。该提示词明确限定输出范围、格式及判断依据，有效抑制模型的自由发挥，提升临床适用性。
 {{< collapse summary="查看源码" openByDefault="false" >}}
@@ -42,7 +42,7 @@ system_prompt = """
 ```
 {{< /collapse >}}
 
-## 1.2 多模型初步测试结果
+## 多模型初步测试结果
 
 在多个主流大语言模型上进行了初步测试，评估其在相同提示词与测试集下的辨证准确率。
 
@@ -57,7 +57,7 @@ system_prompt = """
 
 初步结果显示，**kimi-k2-instruct** 在当前测试集上表现最优，准确率达到 **91.24%**。
 
-## 1.3 模型选择与实验结果
+## 模型选择与实验结果
 
 在综合考虑模型性能、推理效率与平台兼容性后，最终选定 **kimi-k2-instruct** 作为本系统的推理模型。
 
@@ -70,7 +70,7 @@ system_prompt = """
 
 本项目基于预训练的 MobileNetV2 和一个包含 26 类垃圾、每类 100 张图像的垃圾分类数据集，进行迁移学习。
 
-## 2.1 初步尝试：MobileNetV2 迁移学习
+## 初步尝试：MobileNetV2 迁移学习
 
 原始代码使用 MindSpore 2.3.1，不支持 GPU，训练速度慢。因此将整个训练流程迁移到 **PyTorch**，并修复关键问题：
 
@@ -428,7 +428,7 @@ if __name__ == "__main__":
 
 > 注：`model_v2` 参考自B站教程[^1]。
 
-## 2.2 进阶方案：EfficientNet-B0
+## 进阶方案：EfficientNet-B0
 
 考虑到 MobileNetV2 已较陈旧，参考 SOTA 图像分类榜单[^2] 与 ImageNet Leaderboard[^3]，在模型精度与参数量之间权衡后，选用 **EfficientNet-B0**。
 
@@ -642,6 +642,296 @@ def predict(image):
 
 ![垃圾分类最终测试结果](2025-12-27_20-11-12.png)
 
+# 3 金融异常检测
+
+本次金融异常检测实验围绕图神经网络（GNN）在欺诈交易识别任务中的应用。
+
+## 基于 SAGEConv 的三层图神经网络
+
+本实验使用 `torch_geometric.nn.SAGEConv` 实现 GraphSAGE 模型。GraphSAGE 通过聚合邻居节点信息来更新当前节点的表示，适用于大规模图结构数据。
+
+模型结构如下：
+
+{{< collapse summary="查看网络结构" openByDefault="false" >}}
+```python
+class SAGE(nn.Module):
+    def __init__(self, in_feats, h_feats, num_classes):
+        super(SAGE, self).__init__()
+        self.conv1 = SAGEConv(in_feats, h_feats)
+        self.conv2 = SAGEConv(h_feats, h_feats)
+        self.conv3 = SAGEConv(h_feats, num_classes)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x, edge_index):
+        h = self.conv1(x, edge_index)
+        h = F.relu(self.dropout(h))
+        h = self.conv2(h, edge_index)
+        h = F.relu(self.dropout(h))
+        h = self.conv3(h, edge_index)
+        return h
+
+    def reset(self):
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
+        self.conv3.reset_parameters()
+```
+{{< /collapse >}}
+
+- **三层设计**：每层使用 `SAGEConv`，隐藏层维度设为 128；
+- **激活与正则化**：在每层后使用 `ReLU` 激活 + `Dropout(0.5)` 防止过拟合；
+- **输出层**：最后一层直接输出 `num_classes=2` 维的 logits（未经过 softmax），用于后续损失计算；
+- **全图推理**：训练完成后，对整个图的所有节点进行前向传播，保存 `softmax` 后的概率分布（见主函数末尾）：
+  ```python
+  y_pred_all = torch.softmax(out, dim=1).cpu()
+  torch.save(y_pred_all, pred_save_dir)
+  ```
+  这确保了 `predict` 函数可直接通过节点 ID 快速查表获取预测结果。
+
+## 超参数调整与收敛性监控
+
+训练过程中使用了以下策略监控模型状态：
+
+- **优化器**：`Adam`，初始学习率 `lr=0.01`
+- **学习率调度**：`ReduceLROnPlateau`，当验证损失连续 6 轮未下降时，学习率减半；
+- **评估指标**：每 5 轮打印训练/验证的 **Loss** 与 **AUC**；
+
+训练循环核心逻辑如下：
+
+{{< collapse summary="查看训练循环代码" openByDefault="false" >}}
+```python
+for epoch in range(100):
+    model.train()
+    out = model(features, edge_index)
+    loss = loss_fn(out[data.train_mask], labels[data.train_mask])
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    # 验证
+    model.eval()
+    with torch.no_grad():
+        losses = {}
+        eval_results = {}
+        for key in ['train', 'valid']:
+            node_id = split_idx[key]
+            y_pred = torch.softmax(out[node_id], dim=1)  # [N, 2]
+            losses[key] = loss_fn(out[node_id], labels[node_id]).item()
+            eval_results[key] = evaluator.eval(labels[node_id], y_pred)['auc']
+
+        scheduler.step(losses['valid'])
+
+        train_eval, valid_eval = eval_results['train'], eval_results['valid']
+        train_loss, valid_loss = losses['train'], losses['valid']
+
+        if valid_loss < min_valid_loss:
+            min_valid_loss = valid_loss
+            torch.save(model.state_dict(), save_path)
+
+        if epoch % 5 == 0:
+            print(f'Epoch: {epoch:02d}, '
+                  f'Loss: {loss:.4f}, '
+                  f'Train AUC: {100 * train_eval:.3f}, '
+                  f'Valid AUC: {100 * valid_eval:.3f}')
+```
+{{< /collapse >}}
+
+通过观察 `Valid AUC` 是否持续上升且 `Valid Loss` 是否下降，可判断模型是否收敛；若训练 AUC 远高于验证 AUC，则可能过拟合。
+
+## 针对类别不平衡的加权交叉熵损失
+
+数据集统计显示：**欺诈比例仅为 1.2655%**，属于典型的高度不平衡分类问题。若使用普通交叉熵，模型会偏向预测多数类（正常交易），导致对欺诈样本识别能力极差。
+
+为此，我们在损失函数中引入**类别权重**：
+
+{{< collapse summary="查看加权损失实现" openByDefault="false" >}}
+```python
+# 计算类别权重（反比于频率）
+weight = torch.tensor([1.0, len(data.y[data.y == 0]) / len(data.y[data.y == 1])], dtype=torch.float)
+weight = weight.to(device)
+loss_fn = nn.CrossEntropyLoss(weight=weight)
+```
+{{< /collapse >}}
+
+## 核心代码与结果
+{{< collapse summary="查看核心代码" openByDefault="false" >}}
+```python
+# train.py
+import os
+import time
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch_geometric.transforms as T
+from torch_geometric.nn import SAGEConv
+from utils.dgraphfin import DGraphFin
+from utils.utils import prepare_folder
+from utils.evaluator import Evaluator
+
+# --------------------------
+# 路径与时间戳
+# --------------------------
+path = './datasets/632d74d4e2843a53167ee9a1-momodel/'
+timestamp = time.strftime("%m%d-%H%M", time.localtime())
+save_dir = f'./results/{timestamp}.pt'
+pred_save_dir = f'./results/{timestamp}pred.pt'
+os.makedirs('./results', exist_ok=True)
+
+# --------------------------
+# 设备设置
+# --------------------------
+device = 0
+device = f'cuda:{device}' if torch.cuda.is_available() else 'cpu'
+device = torch.device(device)
+
+# --------------------------
+# 数据加载与预处理
+# --------------------------
+dataset_name = 'DGraph'
+dataset = DGraphFin(
+    root=path,
+    name=dataset_name,
+    transform=T.ToSparseTensor(remove_edge_index=False)
+)
+data = dataset[0]
+
+# 仅预测类0（正常）和类1（欺诈）
+nlabels = 2
+
+# 归一化节点特征
+x = data.x
+x = (x - x.mean(0)) / x.std(0)
+data.x = x
+
+# 确保标签为1维
+if data.y.dim() == 2:
+    data.y = data.y.squeeze(1)
+
+# 划分掩码
+split_idx = {
+    'train': data.train_mask,
+    'valid': data.valid_mask,
+    'test': data.test_mask
+}
+
+print(data)
+print(f"x shape: {data.x.shape}")
+print(f"y shape: {data.y.shape}")
+print(f"adj_t type: {type(data.adj_t)}")
+
+# --------------------------
+# 模型定义
+# --------------------------
+class SAGE(nn.Module):
+    def __init__(self, in_feats, h_feats, num_classes):
+        super(SAGE, self).__init__()
+        self.conv1 = SAGEConv(in_feats, h_feats)
+        self.conv2 = SAGEConv(h_feats, h_feats)
+        self.conv3 = SAGEConv(h_feats, num_classes)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x, edge_index):
+        h = self.conv1(x, edge_index)
+        h = F.relu(self.dropout(h))
+        h = self.conv2(h, edge_index)
+        h = F.relu(self.dropout(h))
+        h = self.conv3(h, edge_index)
+        return h
+
+    def reset(self):
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
+        self.conv3.reset_parameters()
+
+# --------------------------
+# 训练函数
+# --------------------------
+def train(data, model, save_path):
+    model.reset()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', patience=6, factor=0.5, verbose=True
+    )
+    # 计算类别权重（反比于频率）
+    weight = torch.tensor([1.0, len(data.y[data.y == 0]) / len(data.y[data.y == 1])], dtype=torch.float)
+    weight = weight.to(device)
+    
+    loss_fn = nn.CrossEntropyLoss(weight=weight)
+    min_valid_loss = float('inf')
+
+    features = data.x.to(device)
+    labels = data.y.to(device)
+    edge_index = data.edge_index.to(device)
+    evaluator = Evaluator('auc')
+
+    for epoch in range(100):
+        model.train()
+        out = model(features, edge_index)
+        loss = loss_fn(out[data.train_mask], labels[data.train_mask])
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        # 验证
+        model.eval()
+        with torch.no_grad():
+            losses = {}
+            eval_results = {}
+            for key in ['train', 'valid']:
+                node_id = split_idx[key]
+                y_pred = torch.softmax(out[node_id], dim=1)  # [N, 2]
+                losses[key] = loss_fn(out[node_id], labels[node_id]).item()
+                eval_results[key] = evaluator.eval(labels[node_id], y_pred)['auc']
+
+            scheduler.step(losses['valid'])
+
+            train_eval, valid_eval = eval_results['train'], eval_results['valid']
+            train_loss, valid_loss = losses['train'], losses['valid']
+
+            if valid_loss < min_valid_loss:
+                min_valid_loss = valid_loss
+                torch.save(model.state_dict(), save_path)
+
+            if epoch % 5 == 0:
+                print(f'Epoch: {epoch:02d}, '
+                      f'Loss: {loss:.4f}, '
+                      f'Train AUC: {100 * train_eval:.3f}, '
+                      f'Valid AUC: {100 * valid_eval:.3f}')
+
+# --------------------------
+# 执行训练并保存预测结果
+# --------------------------
+if __name__ == "__main__":
+    model = SAGE(in_feats=data.x.size(-1), h_feats=128, num_classes=nlabels).to(device)
+    train(data, model, save_dir)
+
+    # 预测并保存所有节点的结果（用于后续 predict）
+    model.load_state_dict(torch.load(save_dir, map_location=device))
+    model.eval()
+    with torch.no_grad():
+        out = model(data.x.to(device), data.edge_index.to(device))
+        y_pred_all = torch.softmax(out, dim=1).cpu()  # ✅ [N, 2] 概率
+        torch.save(y_pred_all, pred_save_dir)
+        
+    print(f"Model saved to {save_dir}")
+    print(f"Prediction saved to {pred_save_dir}")
+
+
+# main.py
+import torch
+
+# 这里可以加载模型
+pred = torch.load('./results/1228-0037pred.pt', map_location=torch.device('cpu'))
+def predict(data,node_id):
+    y_pred = pred[node_id]              # 根据索引快速访问结果
+    return y_pred
+
+```
+{{< /collapse >}}
+
+最终评估结果如下图所示：
+![金融异常检测最终结果](2025-12-28_00-51-47.png)
 
 [^1]: [使用pytorch搭建MobileNetV2并基于迁移学习训练](https://www.bilibili.com/video/BV1qE411T7qZ/?spm_id_from=333.337.search-card.all.click)
 [^2]: [SOTA 图像分类榜单](https://www.codesota.com/browse/computer-vision/image-classification) 
