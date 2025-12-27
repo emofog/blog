@@ -69,10 +69,11 @@ params:
 
   # 首页自我介绍卡片
   homeInfoParams:
-    Title: "全麦面包的博客"
+    Title: "🍞全麦面包的博客"
     Content: >
-      🍞 欢迎来到我的技术笔记与生活随笔！
-
+       给自己时间，不要焦急，一步一步来，一日一日过，请相信生命的韧性是惊人的，跟自己向上的心去合作，不要放弃对自己的爱护。
+      —— 三毛
+      
   # 社交图标（支持 font-awesome 名称）
   socialIcons:
     - name: github
