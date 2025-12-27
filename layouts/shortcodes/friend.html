@@ -1,0 +1,81 @@
+<!-- layouts/shortcodes/friend.html -->
+<!-- 使用方法: {{< friend name="张三" url="https://example.com" avatar="https://avatar.com/photo.jpg" desc="前端开发爱好者" >}} -->
+
+<style>
+  .friend-card {
+    display: inline-block;
+    width: 280px;
+    margin: 12px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    text-decoration: none;
+    vertical-align: top;
+  }
+  
+  .friend-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  .friend-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 24px auto 12px;
+    display: block;
+  }
+  
+  .friend-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin: 8px 0;
+    padding: 0 16px;
+  }
+  
+  .friend-desc {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-align: center;
+    line-height: 1.5;
+    padding: 0 16px 24px;
+    margin: 0;
+  }
+  
+  .friend-link {
+    display: block;
+    padding: 8px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .friend-card:hover .friend-link {
+    opacity: 1;
+  }
+  
+  @media (max-width: 600px) {
+    .friend-card {
+      width: 100%;
+      margin: 8px 0;
+    }
+  }
+</style>
+
+<a href="{{ .Get "url" }}" target="_blank" rel="noopener" class="friend-card">
+  <img src="{{ .Get "avatar" }}" alt="{{ .Get "name" }}" class="friend-avatar">
+  <h3 class="friend-name">{{ .Get "name" }}</h3>
+  <p class="friend-desc">{{ .Get "desc" }}</p>
+  <span class="friend-link">访问主页 →</span>
+</a>
