@@ -1,5 +1,5 @@
-<!-- layouts/shortcodes/friend.html -->
-<!-- 使用方法: {{< friend name="张三" url="https://example.com" avatar="https://avatar.com/photo.jpg" desc="前端开发爱好者" >}} -->
+{{/* layouts/shortcodes/friend.html */}}
+{{/* 使用方法: {{< friend name="张三" url="https://example.com" avatar="https://avatar.com/photo.jpg" desc="前端开发爱好者" >}} */}}
 
 <style>
   .friend-card {
@@ -14,12 +14,12 @@
     text-decoration: none;
     vertical-align: top;
   }
-  
+
   .friend-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
-  
+
   .friend-avatar {
     width: 80px;
     height: 80px;
@@ -30,7 +30,7 @@
     margin: 24px auto 12px;
     display: block;
   }
-  
+
   .friend-name {
     font-size: 18px;
     font-weight: 600;
@@ -39,7 +39,7 @@
     margin: 8px 0;
     padding: 0 16px;
   }
-  
+
   .friend-desc {
     font-size: 14px;
     color: #7f8c8d;
@@ -48,7 +48,7 @@
     padding: 0 16px 24px;
     margin: 0;
   }
-  
+
   .friend-link {
     display: block;
     padding: 8px 0;
@@ -60,11 +60,11 @@
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  
+
   .friend-card:hover .friend-link {
     opacity: 1;
   }
-  
+
   @media (max-width: 600px) {
     .friend-card {
       width: 100%;
