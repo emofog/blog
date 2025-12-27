@@ -99,9 +99,8 @@ params:
   assets:
     disableHLJS: false  # false=启用 highlight.js 代码高亮
 
-  analytics:
-    bing:
-      SiteVerificationTag: "9190DA9222A8D83FE658F8071FA14714"
+  footer:
+    text: '本站内容采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">CC BY-NC-SA 4.0 国际许可协议</a> 进行许可'
 
 # ==========  markup 解析器 ==========
 markup:
