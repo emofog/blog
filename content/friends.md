@@ -2,7 +2,6 @@
 showtoc: false
 ShowBreadCrumbs: false
 hidemeta: true
-comments: true
 ---
 
 # 朋友们
@@ -11,17 +10,17 @@ comments: true
     name="secreu" 
     url="https://secreu.cn/" 
 avatar="https://secreu.cn/img/common/avatar.jpg" 
-    desc="网安高手" 
+    desc="网安高手一枚吖" 
 >}}
 
 
 ## 友链申请格式
 
-欢迎交换友链，请在评论区留言！
+欢迎交换友链，请传[简讯](mailto:emofog@qq.com)给我！
 
 ```
-名称: 你的名称
-地址: 你的网址
-头像: 你的头像网址
-简介: 一句话介绍你的网站
+名称: 
+网址: 
+头像: 
+简介（可选）: 
 ```
