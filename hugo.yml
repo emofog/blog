@@ -74,10 +74,14 @@ params:
       给自己时间，不要焦急，一步一步来，一日一日过，请相信生命的韧性是惊人的，跟自己向上的心去合作，不要放弃对自己的爱护。
       —— 三毛
       
-  # 社交图标（支持 font-awesome 名称）
+  # 社交图标
   socialIcons:
     - name: github
-      url: "https://github.com/emofog"
+      url: "https://github.com/emofog/"
+    - name: leetcode
+      url: "https://leetcode.cn/u/emofog/"
+    - name: email
+      url: "mailto:emofog@qq.com"
 
   # “编辑此页” 链接，指向 GitHub 文件位置
   editPost:

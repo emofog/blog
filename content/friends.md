@@ -9,18 +9,10 @@ hidemeta: true
 {{< friend 
     name="secreu" 
     url="https://secreu.cn/" 
-avatar="https://secreu.cn/img/common/avatar.jpg" 
+    avatar="https://secreu.cn/img/common/avatar.jpg" 
     desc="网安高手一枚吖" 
 >}}
 
 
-## 友链申请格式
+<a href="mailto:emofog@qq.com?subject=申请交换友链&body=名称：%0A网址：%0A头像：%0A简介：%0A%0A期待与你互换链接！">在这交换友链</a>
 
-欢迎交换友链，请传[简讯](mailto:emofog@qq.com)给我！
-
-```
-名称: 
-网址: 
-头像: 
-简介（可选）: 
-```
