@@ -1,0 +1,26 @@
+{{- /* Head custom content area start */ -}}
+{{- /*     Insert any custom code (web-analytics, resources, etc.) - it will appear in the <head></head> section of every page. */ -}}
+{{- /*     Can be overwritten by partial with the same name in the global layouts. */ -}}
+{{- /* 覆盖全站字体：正文用 LXGW WenKai Screen，代码用 JetBrains Mono */ -}}
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" />
+  <!-- Lite version -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.1.0/style.css" />
+  <!-- TC version -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont@1.0.0/style.css" />
+  <!-- Screen version -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jetbrains-mono@1.0.6/css/jetbrains-mono.min.css">
+  <style>
+    body {
+      font-family: "LXGW WenKai", sans-serif;
+      /* Lite version */
+      font-family: "LXGW WenKai Lite", sans-serif;
+      /* TC version */
+      font-family: "LXGW WenKai TC", sans-serif;
+      /* Screen version */
+      font-family: "LXGW WenKai Screen", sans-serif;
+    }
+    code, kbd, pre, samp { font-family: "JetBrains Mono", monospace !important; }
+  </style>
+{{- /* Head custom content area end */ -}}
