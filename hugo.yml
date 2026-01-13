@@ -46,9 +46,9 @@ languages:
         - name: 🔗 友链
           url: /friends/
           weight: 4
-        - name: 关于
-          url: https://emofog.github.io/
-          weight: 5
+        # - name: 关于
+        #   url: https://emofog.github.io/
+        #   weight: 5
 
 # ========== 主题参数（PaperMod 专用） ==========
 params:
