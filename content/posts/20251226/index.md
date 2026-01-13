@@ -1,7 +1,7 @@
 ---
 date: '2025-12-26T22:49:38+08:00'
 draft: false
-title: '在EuRoC数据集上测试ORB_SLAM3效果'
+title: '在数据集上测试ORB_SLAM3效果'
 ---
 
 > **开发环境**  
@@ -9,7 +9,7 @@ title: '在EuRoC数据集上测试ORB_SLAM3效果'
 > - 虚拟机：VMware Workstation 17.5  
 > - 虚拟系统：Ubuntu 20.04.6  
 
-本文记录在 Ubuntu 20.04 虚拟机中搭建 ORB-SLAM3 开发环境并使用 EuRoC 数据集进行测试的完整流程，结合最新官方文档进行了适配和验证。
+本文记录在 Ubuntu 20.04 虚拟机中搭建 ORB-SLAM3 开发环境并使用 EuRoC 和 TUM VI 数据集进行测试的完整流程，结合最新官方文档进行了适配和验证。
 
 ## 1. 安装 ROS1 及依赖
 
@@ -86,20 +86,30 @@ chmod +x build.sh
 ./build.sh
 ```
 
-## 4. 下载并组织 EuRoC 数据集
+## 4. 下载并组织 EuRoC 数据集和 TUM VI 数据集
 
-EuRoC 数据集由 ETH 提供[^1]，包含同步的双目图像、IMU 数据及高精度真值[^2]。
+EuRoC 数据集由 ETH 提供，包含同步的双目图像、IMU 数据及高精度真值[^1]。
 
 1. 访问 [EuRoC MAV Dataset](https://projects.asl.ethz.ch/datasets/euroc-mav/)
 2. 下载 `MH_01_easy.zip`（Machine Hall 系列）
 3. 在 `ORB-SLAM3` 目录下创建数据集结构 `ORB_SLAM3/datasets/MH01/`
 4. 解压 `MH_01_easy.zip` ，将内部的 `mav0` 文件夹移入 `MH01` 文件夹
 
+TUM VI 数据集由 TUM 提供，包含同步的 RGB 图像、深度图和相机位姿真值。
+
+1. 访问 [TUM CVG Dataset](https://cvg.cit.tum.de/data/datasets/rgbd-dataset/download)
+2. 下载 `rgbd_dataset_freiburg1_desk`, `rgbd_dataset_freiburg1_xyz`, `associate.py`
+3. 运行 `associate.py rgb.txt depth.txt > associate.txt` 生成 `associate.txt`
+
 ## 5. 运行测试示例
 
 进入 `Examples` 目录，根据传感器配置运行不同模式。
 
-> 注意：请将路径 `/home/xjc/Desktop/ORB_SLAM3/datasets/MH01` 替换为实际路径。
+注意在源文件中，系统通过以下方式初始化：
+```cpp
+ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::IMU_STEREO, false);
+```
+其中`false`：表示 **不使用可视化界面（Viewer）**；若设为 `true` 则启用 GUI
 
 ### 5.1 单目模式
 
@@ -124,15 +134,16 @@ cd ORB-SLAM3/Examples
 ```bash
 ./Stereo-Inertial/stereo_inertial_euroc ../Vocabulary/ORBvoc.txt ./Stereo-Inertial/EuRoC.yaml /home/xjc/Desktop/ORB_SLAM3/datasets/MH01 ./Stereo-Inertial/EuRoC_TimeStamps/MH01.txt dataset-MH01_stereoi
 ```
-注意在 `stereo_inertial_euroc.cc` 源文件中，系统通过以下方式初始化：
-```cpp
-ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::IMU_STEREO, false);
+
+### 5.5 RGBD模式
+```bash
+sudo mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+./RGB-D/rgbd_tum ../Vocabulary/ORBvoc.txt ./RGB-D/TUM1.yaml /mnt/hgfs/robot/datasets/rgbd_dataset_freiburg1_desk/ /mnt/hgfs/robot/datasets/rgbd_dataset_freiburg1_desk/associate.txt
 ```
-其中`false`：表示 **不使用可视化界面（Viewer）**；若设为 `true` 则启用 GUI
+
 
 [结果视频](https://www.bilibili.com/video/BV1FqBvBbEML/?spm_id_from=333.1387.homepage.video_card.click&vd_source=87511afea40d4a9de7ca2c3b44ff716a)如下：
 
 {{< bilibili BV1FqBvBbEML>}}
 
-[^1]: [EuRoC MAV Dataset 官网](https://projects.asl.ethz.ch/datasets/euroc-mav/)  
-[^2]: Burri, M., et al. (2016). The EuRoC micro aerial vehicle datasets. *The International Journal of Robotics Research*. [DOI:10.1177/0278364915620033](https://journals.sagepub.com/doi/10.1177/0278364915620033)
+[^1]: Burri, M., et al. (2016). The EuRoC micro aerial vehicle datasets. *The International Journal of Robotics Research*. [DOI:10.1177/0278364915620033](https://journals.sagepub.com/doi/10.1177/0278364915620033)
